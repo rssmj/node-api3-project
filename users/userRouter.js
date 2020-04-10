@@ -83,8 +83,15 @@ router.post('/:id/posts', validateUserId, validatePost, async (req, res) => {
 				});
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, validateUser, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const user = req.body;
+	const users = await Users.update(id, user);
+	users;
+	res
+		.status(201)
+		.json({ THAT: `user id: ${id} did the things you wanted`, HERE: user });
 });
 
 router.delete('/:id', (req, res) => {
