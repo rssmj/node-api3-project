@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Posts = require('./postDb.js');
+const validatePostId = require('../middleware/validatePostId.js');
 
 router.get('/', async (req, res) => {
 	// do your magic!
@@ -18,8 +19,14 @@ router.get('/', async (req, res) => {
 				});
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validatePostId, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const posts = await Posts.getById(id);
+	res.status(200).json({
+		INCOMING: `first class delivery for post id: ${id}`,
+		PACKAGE: posts,
+	});
 });
 
 router.delete('/:id', (req, res) => {
@@ -32,8 +39,8 @@ router.put('/:id', (req, res) => {
 
 // custom middleware
 
-function validatePostId(req, res, next) {
-	// do your magic!
-}
+// function validatePostId(req, res, next) {
+// 	// do your magic!
+// }
 
 module.exports = router;
