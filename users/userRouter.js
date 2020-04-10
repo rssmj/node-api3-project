@@ -26,8 +26,21 @@ router.get('/:id', (req, res) => {
 	// do your magic!
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const posts = await Users.getUserPosts(id);
+	posts
+		? res.status(200).json({
+				LOOK: `posts for user id: ${id}`,
+				SEE: posts,
+		  })
+		: res
+				.status(404)
+				.json({ BLANK: 'empty user posts' })
+				.catch(() => {
+					res.status(500).json({ CHOMP: 'this is not food' });
+				});
 });
 
 router.post('/', validateUser, async (req, res) => {
