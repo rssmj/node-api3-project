@@ -26,10 +26,15 @@ router.get('/:id', validateUserId, async (req, res) => {
 	// do your magic!
 	const { id } = req.params;
 	const user = await Users.getById(id);
-	res.status(200).json({
-		THING: `user id: ${id}`,
-		THINGS: user,
-	});
+	res
+		.status(200)
+		.json({
+			THING: `user id: ${id}`,
+			THINGS: user,
+		})
+		.catch(() => {
+			res.status(500).json({ BOOM: 'explosion' });
+		});
 });
 
 router.get('/:id/posts', validateUserId, async (req, res) => {
@@ -91,11 +96,26 @@ router.put('/:id', validateUserId, validateUser, async (req, res) => {
 	users;
 	res
 		.status(201)
-		.json({ THAT: `user id: ${id} did the things you wanted`, HERE: user });
+		.json({
+			THAT: `user id: ${id} did the things you wanted`,
+			HERE: user,
+		})
+		.catch(() => {
+			res.status(500).json({ BOOM: 'explosion' });
+		});
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const user = await Users.remove(id);
+	user;
+	res
+		.status(201)
+		.json({ DEAD: `user id: ${id} did the thing`, DID: user })
+		.catch(() => {
+			res.status(500).json({ BOOM: 'explosion' });
+		});
 });
 
 //custom middleware

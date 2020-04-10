@@ -23,10 +23,15 @@ router.get('/:id', validatePostId, async (req, res) => {
 	// do your magic!
 	const { id } = req.params;
 	const posts = await Posts.getById(id);
-	res.status(200).json({
-		INCOMING: `first class delivery for post id: ${id}`,
-		PACKAGE: posts,
-	});
+	res
+		.status(200)
+		.json({
+			INCOMING: `first class delivery for post id: ${id}`,
+			PACKAGE: posts,
+		})
+		.catch(() => {
+			res.status(500).json({ BOOM: 'explosion' });
+		});
 });
 
 router.put('/:id', validatePostId, async (req, res) => {
@@ -35,11 +40,20 @@ router.put('/:id', validatePostId, async (req, res) => {
 	const post = req.body;
 	const posts = await Posts.update(id, post);
 	posts;
-	res.status(201).json({ THIS: `post id: ${id} did the thing`, DID: post });
+	res.status(201).json({ THIS: `post id: ${id} did the thing`, DEAD: post });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validatePostId, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const post = await Posts.remove(id);
+	post;
+	res
+		.status(201)
+		.json({ DEAD: `post id: ${id} did the thing`, DID: post })
+		.catch(() => {
+			res.status(500).json({ BOOM: 'explosion' });
+		});
 });
 
 // custom middleware
