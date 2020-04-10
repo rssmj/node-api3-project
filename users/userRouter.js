@@ -3,7 +3,7 @@ const router = express.Router();
 const Posts = require('../posts/postDb.js');
 const Users = require('./userDb.js');
 const validatePost = require('../middleware/validatePost.js');
-// const validateUser = require('../middleware/validateUser.js');
+const validateUser = require('../middleware/validateUser.js');
 const validateUserId = require('../middleware/validateUserId.js');
 
 router.get('/', async (req, res) => {
@@ -30,8 +30,20 @@ router.get('/:id/posts', (req, res) => {
 	// do your magic!
 });
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, async (req, res) => {
 	// do your magic!
+	const user = req.body;
+	const newUser = await Users.insert(user);
+	newUser
+		? res
+				.status(201)
+				.json({ NEATO: 'new user fresh out of the over', ENJOY: newUser })
+		: res
+				.status(404)
+				.json({ UHH: 'user is lost' })
+				.catch(() => {
+					res.status(500).json({ WEIRD: 'things' });
+				});
 });
 
 router.post('/:id/posts', validateUserId, validatePost, async (req, res) => {
