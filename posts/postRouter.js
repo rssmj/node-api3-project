@@ -29,11 +29,16 @@ router.get('/:id', validatePostId, async (req, res) => {
 	});
 });
 
-router.delete('/:id', (req, res) => {
+router.put('/:id', validatePostId, async (req, res) => {
 	// do your magic!
+	const { id } = req.params;
+	const post = req.body;
+	const posts = await Posts.update(id, post);
+	posts;
+	res.status(201).json({ THIS: `post id: ${id} did the thing`, DID: post });
 });
 
-router.put('/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
 	// do your magic!
 });
 
